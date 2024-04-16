@@ -17,9 +17,9 @@ int main() {
 
 	while((nread = read(fd, buffer, 1024)) > 0) {
 		for(count = 0; count < nread; count++) {
-			//if((buffer[count] >= 'a' && buffer[count] <= 'z') ||
-			//	(buffer[count] >= 'A' && buffer[count] <= 'Z'))
-			//	numchar++;
+			if((buffer[count] >= 'a' && buffer[count] <= 'z') ||
+				(buffer[count] >= 'A' && buffer[count] <= 'Z'))
+					numchar++;
 
 			if(buffer[count] >= 'a' && buffer[count] <= 'z')
 				buffer[count] = buffer[count] -'a' + 'A';
@@ -27,7 +27,7 @@ int main() {
 		lseek(fd, (off_t)-nread, SEEK_CUR);
 		if(write(fd, buffer, nread) < nread) close(fd);
 	}
-
-	//printf("number : %d\n", count);
+	printf("count : %d\n", numchar);
+	printf("number : %d\n", count);
 	close(fd);
 }
