@@ -41,12 +41,10 @@ int main() {
 	}
 	
 	else {
-		int status;
-		wait(&status);
-		sleep(1);
+		pause();
 	}
-
 	sigprocmask(SIG_UNBLOCK, &set, NULL);
+	return 0;
 }
 	
 void handler(int signum) {
@@ -70,7 +68,7 @@ void handler(int signum) {
 		time_str[strlen(time_str) - 1] = '\0';
 	
 		char log[256];
-		snprintf(log, sizeof(log), "%d\t%d\t%s\t%s\n", pid, 1, time_str, state ? "exit" : "Signal(bye~)");
+		snprintf(log, sizeof(log), "%d\t%s\t%s\n", pid, time_str, state ? "exit" : "Signal(bye~)");
 	
 		write(fd, log, strlen(log));
 		close(fd);
