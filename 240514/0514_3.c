@@ -10,12 +10,12 @@ int main() {
 	if((pid=fork()) > 0) {
 		sleep(2);
 		printf("[parent] bye!\n");
-		raise(SIGINT);
 	}
 	else if(pid == 0) {
 		printf("[childe] set\n");
-		kill(getppid(), SIGINT);
+		sleep(1);
 		printf("[childe] bye\n");
+		kill(getppid(), SIGCHLD);
 	}
 	else {
 		printf("fail to fork\n");
