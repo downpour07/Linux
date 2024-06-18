@@ -8,13 +8,12 @@
 
 int main() {
 	int p1[2], p2[2];
-	int buf[SIZE], result[SIZE];
-	pid_t pid1, pid2;
+	int buf[SIZE];
+	pid_t pid1 = 0, pid2 = 0;
 
 	printf("input two numbers: ");
 	scanf("%d %d", &buf[0], &buf[1]);
 	int bufsize = strlen(buf);
-	int resultsize = strlen(result);
 
 	if(pipe(p1) == -1) {
 		printf("fail to call pipe() 1\n");
@@ -31,8 +30,7 @@ int main() {
 	}
 	if(pid1 > 0) {
 		if((pid2 = fork()) == -1) {
-			printf("fail to call fork() 2\n");
-			exit(1);
+			perror("fail to call fork() 2\n");
 		}
 	}
 
@@ -40,32 +38,31 @@ int main() {
 		write(p1[1], buf, bufsize);
 		write(p2[1], buf, bufsize);
 
-		int sum;
-		read(p1[0], result, resultsize);
-		sum += result[0];
-		read(p2[0], result, resultsize);
-		sum += result[0];
+		sleep(5);
 
-		printf("%d\n", sum);
+		read(p1[0], buf, bufsize);
+		printf("%d ", buf[0]);
+		read(p2[0], buf, bufsize);
+		printf("%d\n", buf[1]);
 	}
 	else if(pid1 == 0 && pid2 == 0) {
 		close(p2[0]);
 		close(p2[1]);
-
+		
 		read(p1[0], buf, bufsize);
-		result[0] = buf[0]+buf[1];
-
-		write(p1[1], result[0], resultsize);
-		exit(0);
+		buf[0] = buf[0] + buf[1];
+		printf("%d ", buf[0]);
+		
+		write(p1[1], buf, bufsize);
 	}
-	else if(pid1 > 0 && pid2 == 0) {
+	else {
 		close(p1[0]);
 		close(p1[1]);
 
 		read(p2[0], buf, bufsize);
-		result[1] = buf[0]*buf[1];
+		buf[1] = buf[0] * buf[1];
+		printf("%d\n", buf[1]);
 
-		write(p2[1], result[1], resultsize);
-		exit(0);
+		write(p2[1], buf, bufsize);
 	}
 }
